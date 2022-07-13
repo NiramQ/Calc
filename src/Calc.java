@@ -17,46 +17,49 @@ public class Calc {
         Scanner in = new Scanner(System.in); //создаем сканер in
         String x = "";//создаем новую строку x(будет введена)
         x = in.nextLine();//"сканируем" строку и сохраняем в x
-        if(gg(x, signsRome)){
-            System.out.println(strRome(romeNum(x, signs, romeDict), romeDict, signsRome));
+
+        if(checkRome(x, signsRome)){
+            System.out.println(strRome(romeNum(x, signs, romeDict, signsRome), romeDict, signsRome));
         } else {
-            System.out.println(arabNum(x, signs));
+            System.out.println(arabNum(x, signs, signsRome));
         }
     }
-    static boolean gg(String a, String b){//если первый символ римская цифра...то true
-        for(int i=0; i<7; i++){
-            if(a.charAt(0) == b.charAt(i)){
+    static boolean checkRome(String a, String b){
+        int k=0;
+        for(int i=0; i<7; i++) {
+            if (a.charAt(0) == b.charAt(i)) {
                 return true;
             }
         }
         return false;
     }
-    static int arabNum(String str, String strOp){//
+    static int arabNum(String str, String strOp, String signsRome){//
         int z1=0;
         int z2=0;
         char[] a = str.toCharArray();
         char[] b = strOp.toCharArray();
         int n = findX(a, b);
-        String splitX1 = splitX(0, n-1, str);//слева от знака операции
-        String splitX2 = splitX(n+2, str.length(), str);//справа от знака
-        try {
-            z1 = Integer.parseInt(splitX1);
-            z2 = Integer.parseInt(splitX2);
-            if(z1>10 | z2>10){//по условиям задачи не больше 10
-                throw new Exception("Не верная команда!z1>10,z2>10");
-            }
-        }catch(Exception ex) {
-            System.out.println(ex.getMessage());
-            System.exit(0);
-        }
-        //смотрим операцию и делаем её
+        String splitX1 = splitX(0, n-1, str, signsRome);//слева от знака операции
+        String splitX2 = splitX(n+2, str.length(), str, signsRome);//справа от знака
+        z1 = Integer.parseInt(splitX1);
+        z2 = Integer.parseInt(splitX2);
         return resultOp(z1, z2, str, n);
     }
-    static String splitX(int nStart, int nEnd, String str){
+    static String splitX(int nStart, int nEnd, String str, String b){
         String c = "";
+        int check;
         char[] ch = str.toCharArray();
         for(int i=nStart; i<nEnd; i++){
             c += ch[i];
+        }
+        if(!checkRome(c, b)){
+            try {
+                check = Integer.parseInt(c);
+                throw new Exception("Не верная команда!");
+            } catch (Exception ex) {
+                System.out.println(ex.getMessage());
+                System.exit(0);
+            }
         }
         return c;
     }
@@ -93,14 +96,15 @@ public class Calc {
         }
         return result;
     }
-    static int romeNum(String str, String strOp, HashMap<String, Integer> x){//найденую операцию +,-,*,/ выполняем с римскими цифрами
+    static int romeNum(String str, String strOp, HashMap<String, Integer> x, String romeSigns){//найденую операцию +,-,*,/ выполняем с римскими цифрами
         char[] a = str.toCharArray();
         char[] b = strOp.toCharArray();
         int n = findX(a, b);
-        String splitX1 = splitX(0, n-1, str);//слева от знака операции
-        String splitX2 = splitX(n+2, str.length(), str);//справа от знака
+        String splitX1 = splitX(0, n-1, str, romeSigns);//слева от знака операции
+        String splitX2 = splitX(n+2, str.length(), str, romeSigns);//справа от знака
         int z1 = romeToArabNum(splitX1, x);
         int z2 = romeToArabNum(splitX2, x);
+        /*
         try {
             if(z1>10 | z2>10 | z1<0 | z2<0){//по условиям задачи не больше 10, и положительно
                 throw new Exception("Не верная команда!z1>10,z2>10,Rome");
@@ -109,6 +113,7 @@ public class Calc {
             System.out.println(ex.getMessage());
             System.exit(0);
         }
+        */
         return resultOp(z1, z2, str, n);
     }
     static int romeToArabNum(String str, HashMap<String, Integer> x){
@@ -142,26 +147,16 @@ public class Calc {
             int i=0;
             int ds = x.get(String.valueOf(sRome[f]));
             int n=z/ds;
-            if(n==1){
-                q.append(sRome[f]);
-                z -= x.get(String.valueOf(sRome[f]));
-            } else if(n==2){
-                q.append(sRome[f]);
-                z -= x.get(String.valueOf(sRome[f]));
-                q.append(sRome[f]);
-                z -= x.get(String.valueOf(sRome[f]));
-            } else if(n==3){
-                q.append(sRome[f]);
-                z -= x.get(String.valueOf(sRome[f]));
-                q.append(sRome[f]);
-                z -= x.get(String.valueOf(sRome[f]));
-                q.append(sRome[f]);
-                z -= x.get(String.valueOf(sRome[f]));
+            if(n>0 & n<4){
+                for(int k=0; k<n; k++){
+                    q.append(sRome[f]);
+                    z -= x.get(String.valueOf(sRome[f]));
+                }
             } else if(n>3) {
-                q.append(sRome[f-1]);
-                z += x.get(String.valueOf(sRome[f-1]));
                 q.append(sRome[f]);
-                z -= x.get(String.valueOf(sRome[f]));
+                z -= x.get(String.valueOf(sRome[f-1]));
+                q.append(sRome[f-1]);
+                z += x.get(String.valueOf(sRome[f]));
             }
         }
         return q.toString();
