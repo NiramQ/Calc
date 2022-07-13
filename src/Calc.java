@@ -137,8 +137,6 @@ public class Calc {
     }
     static String strRome(int z, HashMap<String, Integer> x, String signsRome){
         char[] sRome = signsRome.toCharArray();
-        String str="";
-        int sum=0;
         StringBuilder q = new StringBuilder();
         for(int f=0; f<7; f++){
             int i=0;
