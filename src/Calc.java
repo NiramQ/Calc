@@ -43,6 +43,14 @@ public class Calc {
         String splitX2 = splitX(n+2, str.length(), str, signsRome);//справа от знака
         z1 = Integer.parseInt(splitX1);
         z2 = Integer.parseInt(splitX2);
+        try {
+            if(z1>10 | z2>10 | z1<1 | z2<1){//по условиям задачи не больше 10, и положительно
+                throw new Exception("Не верная команда!");
+            }
+        }catch(Exception ex) {
+            System.out.println(ex.getMessage());
+            System.exit(0);
+        }
         return resultOp(z1, z2, str, n);
     }
     static String splitX(int nStart, int nEnd, String str, String b){
@@ -72,7 +80,7 @@ public class Calc {
                     //z - количество повторов, должна быть ровно одна операция
                     try {
                         if (z > 1) {
-                            throw new Exception("Не верная команда!z>1");
+                            throw new Exception("Не верная команда!");
                         }
                     } catch (Exception ex) {
                         System.out.println(ex.getMessage());
@@ -92,6 +100,14 @@ public class Calc {
             case "*" -> result = z1 * z2;
             case "/" -> result = z1 / z2;
         }
+        try {
+            if(result < 1){//
+                throw new Exception("Не верная команда!");
+            }
+        }catch(Exception ex) {
+            System.out.println(ex.getMessage());
+            System.exit(0);
+        }
         return result;
     }
     static int romeNum(String str, String strOp, HashMap<String, Integer> x, String romeSigns){//найденую операцию +,-,*,/ выполняем с римскими цифрами
@@ -102,16 +118,14 @@ public class Calc {
         String splitX2 = splitX(n+2, str.length(), str, romeSigns);//справа от знака
         int z1 = romeToArabNum(splitX1, x);
         int z2 = romeToArabNum(splitX2, x);
-        /*
         try {
-            if(z1>10 | z2>10 | z1<0 | z2<0){//по условиям задачи не больше 10, и положительно
-                throw new Exception("Не верная команда!z1>10,z2>10,Rome");
+            if(z1>10 | z2>10 | z1<1 | z2<1){//по условиям задачи не больше 10, и положительно
+                throw new Exception("Не верная команда!");
             }
         }catch(Exception ex) {
             System.out.println(ex.getMessage());
             System.exit(0);
         }
-        */
         return resultOp(z1, z2, str, n);
     }
     static int romeToArabNum(String str, HashMap<String, Integer> x){
