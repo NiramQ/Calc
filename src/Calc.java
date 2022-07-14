@@ -154,9 +154,18 @@ public class Calc {
                 z -= x.get(String.valueOf(sRome[f-1]));
                 z += x.get(String.valueOf(sRome[f]));
                 if (!q.isEmpty()) {
-                    q.replace(k-1, q.length(), Character.toString(sRome[f]));
-                    q.append(sRome[f-2]);
-                    k++;
+                    if (z>0 & q.charAt(k-1) == sRome[0]) { //если есть М
+                        q.replace(k, q.length(), Character.toString(sRome[f]));
+                        q.append(sRome[f - 1]);
+                        k++;
+                    } else if (z > 0) {
+                        q.replace(k - 1, q.length(), Character.toString(sRome[f]));
+                        q.append(sRome[f - 2]);
+                        k++;
+                    } else if (z == 0){
+                        q.replace(k-1, q.length(), Character.toString(sRome[f]));
+                        q.append(sRome[f-2]);
+                    }
                 } else {
                     q.append(sRome[f]);
                     q.append(sRome[f-1]);
