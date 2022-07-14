@@ -17,12 +17,12 @@ public class Calc {
         Scanner in = new Scanner(System.in); //создаем сканер in
         String x = "";//создаем новую строку x(будет введена)
         x = in.nextLine();//"сканируем" строку и сохраняем в x
-
         if(checkRome(x, signsRome)){
             System.out.println(strRome(romeNum(x, signs, romeDict, signsRome), romeDict, signsRome));
         } else {
             System.out.println(arabNum(x, signs, signsRome));
         }
+        //System.out.println(strRome(romeNum(x, signs, romeDict, signsRome), romeDict, signsRome));
     }
     static boolean checkRome(String a, String b){
         int k=0;
@@ -47,16 +47,14 @@ public class Calc {
     }
     static String splitX(int nStart, int nEnd, String str, String b){
         String c = "";
-        int check;
         char[] ch = str.toCharArray();
         for(int i=nStart; i<nEnd; i++){
             c += ch[i];
         }
         if(!checkRome(c, b)){
             try {
-                check = Integer.parseInt(c);
-                throw new Exception("Не верная команда!");
-            } catch (Exception ex) {
+                Integer.parseInt(c);
+            } catch (NumberFormatException ex) {
                 System.out.println(ex.getMessage());
                 System.exit(0);
             }
@@ -143,20 +141,33 @@ public class Calc {
     static String strRome(int z, HashMap<String, Integer> x, String signsRome){
         char[] sRome = signsRome.toCharArray();
         StringBuilder q = new StringBuilder();
+        int k=0;
         for(int f=0; f<7; f++){
-            int i=0;
+            int n=0;
             int ds = x.get(String.valueOf(sRome[f]));
-            int n=z/ds;
-            if(n>0 & n<4){
-                for(int k=0; k<n; k++){
+            n = z / ds; //
+            if (n == 1) {
+                q.append(sRome[f]);
+                k++;
+                z -= x.get(String.valueOf(sRome[f]));
+            } else if (n > 3 & f > 0) {
+                z -= x.get(String.valueOf(sRome[f-1]));
+                z += x.get(String.valueOf(sRome[f]));
+                if (!q.isEmpty()) {
+                    q.replace(k-1, q.length(), Character.toString(sRome[f]));
+                    q.append(sRome[f-2]);
+                    k++;
+                } else {
                     q.append(sRome[f]);
+                    q.append(sRome[f-1]);
+                    k+=2;
+                }
+            } else if (n == 3 | n == 2){
+                for(int i=0; i<n; i++){
+                    q.append(sRome[f]);
+                    k++;
                     z -= x.get(String.valueOf(sRome[f]));
                 }
-            } else if(n>3) {
-                q.append(sRome[f]);
-                z -= x.get(String.valueOf(sRome[f-1]));
-                q.append(sRome[f-1]);
-                z += x.get(String.valueOf(sRome[f]));
             }
         }
         return q.toString();
